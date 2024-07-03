@@ -26,7 +26,9 @@ export class Source extends BaseSource<Params> {
     }
 
     try {
-      const pos = (omnifunc == "v:lua.vim.lsp.omnifunc") ? await args.denops.call(omnifunc, 0, 0) as number : await args.denops.call(omnifunc, 1, "") as number;
+      const pos = (omnifunc == "v:lua.vim.lsp.omnifunc")
+        ? await args.denops.call("luaeval", "vim.lsp.omnifunc(1, 0)") as number
+        : await args.denops.call(omnifunc, 1, "") as number;
       return Promise.resolve(pos);
     } catch (e: unknown) {
       console.error(
@@ -52,7 +54,9 @@ export class Source extends BaseSource<Params> {
     }
 
     try {
-      const ret = (omnifunc == "v:lua.vim.lsp.omnifunc") ? await args.denops.call(omnifunc, 1, 0) : await args.denops.call(omnifunc, 0, "");
+      const ret = (omnifunc == "v:lua.vim.lsp.omnifunc")
+        ? await args.denops.call("luaeval", "vim.lsp.omnifunc(0, 0)") //await args.denops.call("v:lua.vim.lsp.omnifunc", 1, 0) 
+        : await args.denops.call(omnifunc, 0, "");
       if (ret instanceof Array && ret.length != 0) {
         return Promise.resolve(ret.map(
           (candidate) =>
